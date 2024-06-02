@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+  ftp-first-container:
+    image: ftp-ubuntu-image
+    
+    depends_on: 
+      - ftp-second-container
+    networks:
+      -  ftp-network
+
+  ftp-second-container:
+   image: ftp-kali-image
+   depends_on:
+    - ftp-third-container
+   networks:
+      - ftp-network
+
+  ftp-third-container:
+   image: ftp-ubuntu-image
+   
+   restart: always
+   networks:
+      - ftp-network
+
+networks:
+  ftp-network:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.16.238.0/24"
+
