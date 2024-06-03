@@ -7,23 +7,23 @@ services:
     depends_on: 
       - second-container
     networks:
-      - ${network_name}
+      - buddy
 
   second-container:
     image: ${image_name}
     depends_on:
       - third-container
     networks:
-      - ${network_name}
+      - buddy 
 
   third-container:
     image: ${image_name}
     restart: always
     networks:
-      - ${network_name}
+      - buddy  
 
 networks:
-  mushroom:
+  buddy:
     ipam:
       driver: default
       config:
