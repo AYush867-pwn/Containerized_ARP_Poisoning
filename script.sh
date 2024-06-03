@@ -1,5 +1,6 @@
-apt update && \
-echo 'listen=YES' >> /etc/vsftpd.conf && \
+apt update  && \
+apt install ftp -y
+echo 'listen=YES' >>/etc/vsftpd.conf && \
 echo 'anonymous_enable=NO' >> /etc/vsftpd.conf && \
 echo 'local_enable=YES' >> /etc/vsftpd.conf && \
 echo 'write_enable=YES' >> /etc/vsftpd.conf && \
@@ -13,4 +14,5 @@ echo 'pasv_address=127.0.0.1' >> /etc/vsftpd.conf
 
 service ssh start && \ 
 service vsftpd start
+
 

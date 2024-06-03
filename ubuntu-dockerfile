@@ -1,4 +1,5 @@
-FROM kalilinux/kali-rolling
+# Use the official Ubuntu image
+FROM ubuntu:latest
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
@@ -12,33 +13,36 @@ RUN apt-get update && apt-get install -y \
     dsniff \
     sudo \
     nano\
+    tcpdump\
     && rm -rf /var/lib/apt/lists/*
 
 
 # Create a user with a password and add to sudoers
 RUN useradd -m -s /bin/bash buddy && \
     echo 'buddy:123' | chpasswd && \
-    usermod -aG sudo buddy
+    adduser buddy sudo
 
-COPY /home/kr3pt0/Projects/Networking/script.sh /home/buddy/ 
+COPY script.sh /home/buddy/ 
+
 # Configure SSH
 RUN mkdir /var/run/sshd
 RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
 RUN echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
 RUN echo 'buddy ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
+# Configure vsftpd
 RUN echo 'listen=YES' >> /etc/vsftpd.conf && \
-    echo 'anonymous_enable=YES' >> /etc/vsftpd.conf && \
+    echo 'anonymous_enable=NO' >> /etc/vsftpd.conf && \
     echo 'local_enable=YES' >> /etc/vsftpd.conf && \
     echo 'write_enable=YES' >> /etc/vsftpd.conf && \
     echo 'local_umask=022' >> /etc/vsftpd.conf && \
     echo 'chroot_local_user=YES' >> /etc/vsftpd.conf && \
-    echo 'allow_writeable_chroot=YES' >> /etc/vsftpd.conf
+    echo 'allow_writeable_chroot=YES' >> /etc/vsftpd.conf && \
+    echo 'pasv_min_port=40000' >> /etc/vsftpd.conf && \
+    echo 'pasv_max_port=40005' >> /etc/vsftpd.conf && \
+    echo 'pasv_address=127.0.0.1' >> /etc/vsftpd.conf
 
 # Expose ports for SSH and FTP
 EXPOSE 22 21
 
-# Start SSH and FTP services
-CMD service ssh start  && tail -f    /dev/null
-#&& service vsftpd start && bash
-
+CMD ["bash", "-c", "service ssh start && tail -f /dev/null"]

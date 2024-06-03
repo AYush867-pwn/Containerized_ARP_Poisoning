@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  first-container:
+    image: ${image_name}
+    
+    depends_on: 
+      - second-container
+    networks:
+      - ${network_name}
+
+  second-container:
+    image: ${image_name}
+    depends_on:
+      - third-container
+    networks:
+      - ${network_name}
+
+  third-container:
+    image: ${image_name}
+    restart: always
+    networks:
+      - ${network_name}
+
+networks:
+  mushroom:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.168.238.0/24"

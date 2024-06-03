@@ -1,6 +1,6 @@
 #!/bin/bash
 
-container_ids=$(docker ps -a)
+container_ids=$(docker ps -q )
 
 for id in $container_ids; do
     name=$(docker inspect --format='{{.Name}}' $id | sed 's/^\///')
